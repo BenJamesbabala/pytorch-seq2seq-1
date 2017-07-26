@@ -154,7 +154,11 @@ class CudaDataLoader(torch.utils.data.DataLoader):
             return PackedSequence(data, t.batch_sizes)
 
         batch = self.dataset.caps_field.pad(item[1])
-        seq, lens = self.dataset.caps_field.numericalize(batch, train=self.dataset.is_train)
+        seq, lens = self.dataset.caps_field.numericalize(
+            batch, 
+            train=self.dataset.is_train,
+            device=None if torch.cuda.is_available() else -1,
+        )
 
         return _cudaize_packed(item[0]), seq, lens
 
